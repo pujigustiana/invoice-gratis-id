@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Invoice Gratis ID — Buat Invoice, Cetak PDF, Tanpa Daftar</title>
+<meta name="description" content="Buat invoice gratis Bahasa Indonesia langsung di browser. Tanpa daftar, tanpa biaya, tanpa server. Total otomatis, PPN 11%, terbilang rupiah, cetak atau simpan sebagai PDF.">
+<meta name="keywords" content="invoice gratis, buat invoice online, invoice bahasa indonesia, template invoice gratis, cetak invoice pdf, invoice umkm, kwitansi online">
+<meta property="og:title" content="Invoice Gratis ID — Buat Invoice, Cetak PDF, Tanpa Daftar">
+<meta property="og:description" content="Invoice gratis Bahasa Indonesia di browser. Tanpa daftar, tanpa biaya. Total otomatis, PPN 11%, terbilang rupiah, simpan sebagai PDF.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://github.com/pujigustiana/invoice-gratis-id">
+<link rel="canonical" href="https://github.com/pujigustiana/invoice-gratis-id">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Invoice Gratis ID","applicationCategory":"BusinessApplication","operatingSystem":"Web browser","offers":{"@type":"Offer","price":"0","priceCurrency":"IDR"},"description":"Buat invoice gratis Bahasa Indonesia di browser, cetak atau simpan sebagai PDF, tanpa daftar."}</script>
+<style>
+  body{font-family:system-ui,Arial,sans-serif;max-width:800px;margin:24px auto;padding:0 16px;color:#111}
+  h1{font-size:22px} p{color:#444} label{display:block;margin:10px 0 4px;font-weight:600}
+  input,textarea{width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;box-sizing:border-box}
+  table{width:100%;border-collapse:collapse;margin-top:12px}
+  th,td{border:1px solid #ddd;padding:6px;text-align:left} th{background:#f2f2f2}
+  td input{border:0;padding:4px} .row{display:flex;gap:12px} .row>div{flex:1}
+  button{padding:10px 16px;border:0;border-radius:6px;background:#111;color:#fff;cursor:pointer;margin:8px 8px 0 0}
+  button.ghost{background:#eee;color:#111} #total{font-size:20px;font-weight:700;text-align:right;margin-top:12px}
+  @media print{button,.no-print{display:none} body{margin:0}}
+</style>
+</head>
+<body>
+<h1>Invoice Gratis ID</h1>
+<p>Buat invoice dalam Bahasa Indonesia, langsung di browser. Gratis, tanpa daftar, tanpa server — datamu tidak dikirim ke mana pun. Klik <b>Cetak / Simpan PDF</b> untuk menyimpan sebagai PDF.</p>
+<div class="row">
+  <div><label>Nama Usaha</label><input id="usaha" value="Usaha Saya"></div>
+  <div><label>No. Invoice</label><input id="no" value="INV-001"></div>
+  <div><label>Tanggal</label><input id="tgl" type="date"></div>
+</div>
+<label>Ditagihkan ke (nama + alamat pelanggan)</label>
+<textarea id="pelanggan" rows="2">Pelanggan</textarea>
+<table id="items">
+  <tr><th>Deskripsi</th><th>Qty</th><th>Harga (Rp)</th><th>Jumlah</th><th></th></tr>
+</table>
+<button class="ghost" onclick="tambahBaris()">+ Tambah baris</button>
+<label><input type="checkbox" id="ppn" onchange="hitung()"> Tambah PPN 11%</label>
+<div id="total">Total: Rp 0</div>
+<p id="terbilang" style="color:#444"></p>
+<button onclick="window.print()">Cetak / Simpan PDF</button>
+<button class="ghost" onclick="simpan()">Simpan di browser ini</button>
+<button class="ghost" onclick="muat()">Muat tersimpan</button>
+<script>
+function rupiah(n){return 'Rp '+Number(n||0).toLocaleString('id-ID')}
+function tambahBaris(d='',q=1,h=0){
+  const t=document.getElementById('items'); const r=t.insertRow();
+  r.innerHTML='<td><input value="'+d+'"></td><td><input type="number" value="'+q+'" min="0" oninput="hitung()"></td><td><input type="number" value="'+h+'" min="0" oninput="hitung()"></td><td class="jml"></td><td><button class="ghost" onclick="this.parentElement.parentElement.remove();hitung()">Hapus</button></td>';
+  hitung();
+}
+function terbilang(n){
+  const a=['','satu','dua','tiga','empat','lima','enam','tujuh','delapan','sembilan','sepuluh','sebelas'];
+  n=Math.floor(Math.abs(n));
+  if(n<12) return a[n]; if(n<20) return terbilang(n-10)+' belas'; if(n<100) return terbilang(Math.floor(n/10))+' puluh '+terbilang(n%10);
+  if(n<200) return 'seratus '+terbilang(n-100); if(n<1000) return terbilang(Math.floor(n/100))+' ratus '+terbilang(n%100);
+  if(n<2000) return 'seribu '+terbilang(n-1000); if(n<1000000) return terbilang(Math.floor(n/1000))+' ribu '+terbilang(n%1000);
+  return terbilang(Math.floor(n/1000000))+' juta '+terbilang(n%1000000);
+}
+function hitung(){
+  let sub=0;
+  document.querySelectorAll('#items tr').forEach((r,i)=>{ if(!i) return;
+    const q=+r.cells[1].querySelector('input').value||0, h=+r.cells[2].querySelector('input').value||0;
+    const j=q*h; r.cells[3].textContent=rupiah(j); sub+=j; });
+  let tot=sub; if(document.getElementById('ppn').checked) tot=sub*1.11;
+  document.getElementById('total').textContent='Total: '+rupiah(tot);
+  document.getElementById('terbilang').textContent=tot?('Terbilang: '+terbilang(tot).replace(/\s+/g,' ').trim()+' rupiah'):'';
+}
+function simpan(){ const d={usaha:usaha.value,no:no.value,tgl:tgl.value,pelanggan:pelanggan.value,items:[...document.querySelectorAll('#items tr')].slice(1).map(r=>[r.cells[0].querySelector('input').value,r.cells[1].querySelector('input').value,r.cells[2].querySelector('input').value])}; localStorage.setItem('invoice-id',JSON.stringify(d)); alert('Tersimpan di browser ini.'); }
+function muat(){ const d=JSON.parse(localStorage.getItem('invoice-id')||'null'); if(!d) return alert('Belum ada yang tersimpan.'); usaha.value=d.usaha; no.value=d.no; tgl.value=d.tgl; pelanggan.value=d.pelanggan; document.querySelectorAll('#items tr').forEach((r,i)=>{if(i)r.remove()}); d.items.forEach(x=>tambahBaris(x[0],x[1],x[2])); }
+document.getElementById('tgl').valueAsDate=new Date();
+tambahBaris('Jasa / produk 1',1,100000); tambahBaris('Jasa / produk 2',1,50000);
+</script>
+</body>
+</html>
