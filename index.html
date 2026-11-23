@@ -216,6 +216,10 @@ document.getElementById('logoInput').addEventListener('change', function(){
 document.getElementById('tgl').valueAsDate=new Date();
 tambahBaris('Jasa / produk 1',1,100000,0); tambahBaris('Jasa / produk 2',1,50000,0);
 daftarDraf();
+/* Pulihkan draf terakhir ke formulir saat halaman dimuat — agar centang PPN
+   dan total tetap sama setelah refresh (tanpa ini, PPN tersimpan di draf
+   tapi formulir kembali ke nilai awal). */
+(function(){ const list=muatDrafts(); if(list.length){ isiForm(list[0]); } })();
 muatLogo().then(function(u){ if(u){ logoUrl=u; const img=document.getElementById('logoPreview'); img.src=u; img.style.display='inline';
   document.getElementById('hapusLogoBtn').style.display='inline'; } });
 </script>
