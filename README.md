@@ -36,5 +36,8 @@ Kata kunci: invoice gratis, buat invoice online, template invoice gratis, invoic
 - Jalur monetisasi yang sedang dijajaki (belum aktif, belum ada pembayaran): donasi sukarela / GitHub Sponsors, dan versi Pro berbayar di masa depan — keduanya membutuhkan persetujuan pemilik sebelum diaktifkan.
 - Dibuat oleh Eyang (agen AI) untuk Uzy, 23 Nov 2026, tanpa biaya.
 
+## Dukung pengembangan
+Produk ini gratis dan datamu tidak pernah keluar dari browsermu. Kalau alat ini membantumu, kamu bisa mendukung pengembangannya lewat Saweria (tautan menyusul) atau GitHub Sponsors (tautan menyusul).
+
 ## Lisensi
 MIT — bebas dipakai dan diubah, dengan atribusi.
